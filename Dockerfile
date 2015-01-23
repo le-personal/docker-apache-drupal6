@@ -20,10 +20,6 @@ RUN apt-get -y install apache2 libapache2-mod-php5 php5-mcrypt php5-cli php5-com
 # Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Enable apache mods.
-RUN a2enmod php5
-RUN a2enmod rewrite
-
 RUN pecl install uploadprogress
 
 RUN /usr/bin/curl -sS https://getcomposer.org/installer | /usr/bin/php
@@ -34,6 +30,10 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN /usr/local/bin/composer self-update
 RUN /usr/local/bin/composer global require drush/drush:6.*
 RUN ln -s /.composer/vendor/drush/drush/drush /usr/local/bin/drush
+
+# Enable apache mods.
+RUN a2enmod php5
+RUN a2enmod rewrite
 
 # PHP
 RUN sed -i 's/memory_limit = .*/memory_limit = 196M/' /etc/php5/apache2/php.ini
@@ -61,4 +61,4 @@ CMD ["/usr/bin/supervisord", "-n"]
 
 # Add files
 ADD ./config/supervisord-apache.conf /etc/supervisor/conf.d/supervisord-apache.conf
-ADD ./config/apache-config.conf /etc/apache2/sites-enabled/000-default.conf
+ADD ./config/apache-config.conf /etc/apache2/sites-enabled/000-default

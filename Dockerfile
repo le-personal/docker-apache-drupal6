@@ -9,7 +9,7 @@ ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
 RUN apt-get update
-RUN apt-get -y upgrade
+RUN apt-get -y dist-upgrade
 
 # Install apache, PHP, and supplimentary programs. curl and lynx-cur are for debugging the container.
 RUN apt-get -y install apache2 libapache2-mod-php5 php5-mcrypt php5-cli php5-common php5-json php5-memcache php5-mysql php5-gd php-pear php-apc php5-dev php5-curl curl git supervisor
@@ -34,6 +34,7 @@ RUN sed -i 's/memory_limit = .*/memory_limit = 196M/' /etc/php5/apache2/php.ini
 RUN sed -i 's/cgi.fix_pathinfo = .*/cgi.fix_pathinfo = 0/' /etc/php5/apache2/php.ini
 RUN sed -i 's/upload_max_filesize = .*/upload_max_filesize = 500M/' /etc/php5/apache2/php.ini
 RUN sed -i 's/post_max_size = .*/post_max_size = 500M/' /etc/php5/apache2/php.ini
+RUN echo "extension=uploadprogress.so" > /etc/php5/apache2/conf.d/uploadprogress.ini
 
 # Manually set up the apache environment variables
 ENV APACHE_RUN_USER www-data
@@ -42,7 +43,6 @@ ENV APACHE_LOG_DIR /var/log/supervisor
 ENV APACHE_LOCK_DIR /var/lock/apache2
 ENV APACHE_PID_FILE /var/run/apache2.pid
 
-RUN mkdir /var/www
 RUN usermod -u 1000 www-data
 RUN usermod -a -G users www-data
 RUN chown -R www-data:www-data /var/www

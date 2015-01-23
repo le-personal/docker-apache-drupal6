@@ -8,13 +8,14 @@ RUN locale-gen en_US.UTF-8
 ENV LANG       en_US.UTF-8
 ENV LC_ALL     en_US.UTF-8
 
+# Deny restarting applications when installing them
+RUN echo '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d
+
 # Update system
 RUN apt-get update && apt-get dist-upgrade -y
 
 # Install apache, PHP, and supplimentary programs. curl and lynx-cur are for debugging the container.
 RUN apt-get -y install apache2 libapache2-mod-php5 php5-mcrypt php5-cli php5-common php5-json php5-memcache php5-mysql php5-gd php-pear php-apc php5-dev php5-curl curl git supervisor make
-
-RUN echo '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d
 
 # Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
